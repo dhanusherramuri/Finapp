@@ -9,30 +9,37 @@ function Login() {
     // const navigation = useNavigation();
     const [username,setUsername]= useState('');
     const [password,setPassword]= useState('');
-    const login = async ()=>{
-        if (!username || !password|| !username.trim() || !password.trim()) {
-            Alert.alert('Error', 'Please enter both username and password');
-            return;
-          }
-          try{
-            const user = await signInWithEmailAndPassword(Auth,username,password);
-            console.log('Success');
-            Alert.alert('Success', `Logged in as ${username}`);
-            router.push("/Bank")
-          }
-          catch(error){
-            console.log(error);
-            Alert.alert(error.message);
-          }
+    const login = async () => {
+      if (!username || !password || !username.trim() || !password.trim()) {
+        Alert.alert('Error', 'Please enter both email and password');
+        return;
+      }
+    
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(username)) {
+        Alert.alert('Error', 'Please enter a valid email address');
+        return;
+      }
+    
+      try {
+        const user = await signInWithEmailAndPassword(Auth, username, password);
+        console.log('Success');
+        Alert.alert('Success', `Logged in as ${username}`);
+        router.replace("/Bank");
+      } catch (error) {
+        console.log(error);
+        Alert.alert('Login failed', error.message);
+      }
     };
-  return (
-    <View>
+    
+    return (
+      <View>
       <Text style={{ 
-  textAlign: 'center', 
-  fontWeight: 'bold', 
-  fontSize: 20, 
-  marginVertical: 10 
-}}>
+        textAlign: 'center', 
+        fontWeight: 'bold', 
+        fontSize: 20, 
+        marginVertical: 10 
+      }}>
   Login Page
 </Text>
 
@@ -42,6 +49,6 @@ function Login() {
         <TouchableOpacity onPress={()=> router.push("/Signup")}><Text style={styles.lnktxt}>Signup</Text></TouchableOpacity>
     </View>
   )
-}
+};
 
 export default Login
