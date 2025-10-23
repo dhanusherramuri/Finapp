@@ -54,13 +54,65 @@ function Bank() {
     return formatted;
   };
 
+
+
+  // const formatExpiry = (text) => {
+  //   const cleaned = text.replace(/\D/g, '');
+  //   let formatted = cleaned;
+  
+  //   if (cleaned.length >= 2) {
+  //     const month = parseInt(cleaned.slice(0, 2), 10);
+  //     const year = cleaned.slice(2, 4);
+  //     const currentYear = new Date().getFullYear() % 100;
+  
+  //     if (month < 1 || month > 12) {
+  //       return cleaned.slice(0, 1);
+  //     }
+  
+  //     if (year && year.length === 2) {
+  //       const yearNum = parseInt(year, 10);
+  //       if (yearNum < currentYear) {
+  //         return `${String(month).padStart(2, '0')}/`;
+  //       }
+  //     }
+  
+  //     formatted = `${String(month).padStart(2, '0')}/${year}`;
+  //   }
+  
+  //   return formatted;
+  // };
+  
   const formatExpiry = (text) => {
     const cleaned = text.replace(/\D/g, '');
+    let formatted = cleaned;
+  
     if (cleaned.length >= 2) {
-      return cleaned.slice(0, 2) + '/' + cleaned.slice(2, 4);
+      const month = parseInt(cleaned.slice(0, 2), 10);
+      const year = cleaned.slice(2, 4);
+      const now = new Date();
+      const currentYear = now.getFullYear() % 100;
+      const currentMonth = now.getMonth() + 1;
+  
+      if (month < 1 || month > 12) {
+        return cleaned.slice(0, 1);
+      }
+  
+      if (year && year.length === 2) {
+        const yearNum = parseInt(year, 10);
+        if (yearNum < currentYear) {
+          return `${String(month).padStart(2, '0')}/`;
+        }
+        if (yearNum === currentYear && month < currentMonth) {
+          return `${String(currentMonth).padStart(2, '0')}/`;
+        }
+      }
+  
+      formatted = `${String(month).padStart(2, '0')}/${year}`;
     }
-    return cleaned;
+  
+    return formatted;
   };
+  
 
   const updt = async () => {
     const user = Auth.currentUser;
@@ -138,6 +190,34 @@ function Bank() {
     }
   };
 
+  // const deleteCard = async () => {
+  //   Alert.alert(
+  //     "Delete Card",
+  //     "Are you sure you want to delete this card?",
+  //     [
+  //       { text: "Cancel", style: "cancel" },
+  //       {
+  //         text: "Delete",
+  //         style: "destructive",
+  //         onPress: async () => {
+  //           const user = Auth.currentUser;
+  //           if (!user) return;
+
+  //           try {
+  //             await updateDoc(doc(db, "users", user.uid), {
+  //               cardDetails: null
+  //             });
+  //             setSavedCards([]);
+  //             Alert.alert("Success", "Card deleted successfully");
+  //           } catch (error) {
+  //             Alert.alert("Error", error.message);
+  //           }
+  //         }
+  //       }
+  //     ]
+  //   );
+  // };
+
   const deleteCard = async () => {
     Alert.alert(
       "Delete Card",
@@ -150,12 +230,19 @@ function Bank() {
           onPress: async () => {
             const user = Auth.currentUser;
             if (!user) return;
-
+  
             try {
               await updateDoc(doc(db, "users", user.uid), {
                 cardDetails: null
               });
+  
               setSavedCards([]);
+              setCardNo("");
+              setChln("");
+              setExp("");
+              setCvv("");
+              setShowAddCard(true);
+  
               Alert.alert("Success", "Card deleted successfully");
             } catch (error) {
               Alert.alert("Error", error.message);
@@ -165,6 +252,7 @@ function Bank() {
       ]
     );
   };
+  
 
   const startEdit = () => {
     if (savedCards.length > 0) {
@@ -251,7 +339,7 @@ function Bank() {
         </TouchableOpacity>
 
         {/* Add Card Section */}
-        {showAddCard && savedCards.length === 0 && (
+        {savedCards && savedCards.length === 0 ? (
           <View style={{ marginTop: 30 }}>
             <Text style={{ fontSize: 28, fontWeight: 'bold', marginBottom: 10 }}>Card Details</Text>
             <TextInput
@@ -309,15 +397,13 @@ function Bank() {
               </Text>
             </TouchableOpacity>
           </View>
-        )}
-        {savedCards.length > 0 && (
+        ):
+         (
           <View style={{ marginTop: 30 }}>
             <Text style={{ fontSize: 28, fontWeight: 'bold', marginBottom: 10 }}>
               Card Details
             </Text>
-            {/* <Text style={{ fontSize: 14, color: '#666', marginBottom: 25 }}>
-              This card will be used for all your investment payments.
-            </Text> */}
+
 
             {savedCards.map((card, index) => (
               <View 
