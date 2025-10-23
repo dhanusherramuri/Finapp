@@ -56,31 +56,6 @@ function Bank() {
 
 
 
-  // const formatExpiry = (text) => {
-  //   const cleaned = text.replace(/\D/g, '');
-  //   let formatted = cleaned;
-  
-  //   if (cleaned.length >= 2) {
-  //     const month = parseInt(cleaned.slice(0, 2), 10);
-  //     const year = cleaned.slice(2, 4);
-  //     const currentYear = new Date().getFullYear() % 100;
-  
-  //     if (month < 1 || month > 12) {
-  //       return cleaned.slice(0, 1);
-  //     }
-  
-  //     if (year && year.length === 2) {
-  //       const yearNum = parseInt(year, 10);
-  //       if (yearNum < currentYear) {
-  //         return `${String(month).padStart(2, '0')}/`;
-  //       }
-  //     }
-  
-  //     formatted = `${String(month).padStart(2, '0')}/${year}`;
-  //   }
-  
-  //   return formatted;
-  // };
   
   const formatExpiry = (text) => {
     const cleaned = text.replace(/\D/g, '');
